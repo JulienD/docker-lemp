@@ -1,0 +1,29 @@
+nginx:
+  build: nginx-fpm
+  links:
+    - phpfpm
+  ports:
+    - "8080:80"
+  volumes_from:
+    - data
+
+phpfpm:
+  build: php-5.6-fpm-custom
+  volumes_from:
+    - data
+    - db
+        
+db:
+  image: mariadb
+  volumes:
+    - /var/run/mysqld
+    - ./databases/active:/var/lib/mysql
+  environment:
+    MYSQL_ROOT_PASSWORD: password
+    MYSQL_DATABASE: application
+
+data:
+  image: busybox
+  stdin_open: true
+  volumes:
+    - ./htdocs:/var/www/html
